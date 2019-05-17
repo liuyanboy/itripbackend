@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop
+      http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+      http://www.springframework.org/schema/mvc
+      http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+      http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/tx
+      http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <!-- 不同类型的邮箱，它的host主机、port端口是不一样的。 -->
+        <!--<property name="host" value="smtp.aliyun.com"></property>
+        <property name="port" value="465"></property>-->
+        <property name="host" value="smtp.163.com"></property>
+        <property name="port" value="25"></property>
+        <!-- username为发件邮箱的账号， password为发件邮箱在开通SMTP服务后得到的  授权密码。
+        注：只有开通了SMTP服务的邮箱才能使用javaMail技术发送邮件。
+        liuyan_awei@aliyun.com作为服务器-->
+        <property name="username" value="liuyan_awei@163.com"></property>
+        <property name="password" value="123456admin"></property>
+        <property name="defaultEncoding" value="UTF-8"></property>
+        <property name="javaMailProperties">
+            <props>
+                <!-- 设置SMTP服务器需要用户验证 -->
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+                <prop key="mail.smtp.socketFactory.port">25</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="activationMailMessage"  class="org.springframework.mail.SimpleMailMessage" scope="prototype">
+        <!-- 设置发送邮箱的邮箱地址 -->
+        <property name="from" value="liuyan_awei@163.com"></property>
+        <!-- 邮件的标题 -->
+        <property name="subject" value="【i旅行】请激活您的账户"></property>
+        <property name="text" value=""></property>
+    </bean>
+
+</beans>

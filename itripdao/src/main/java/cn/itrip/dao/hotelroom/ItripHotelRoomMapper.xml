@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itrip.dao.hotelroom.ItripHotelRoomMapper">
+
+    <select id="getItripHotelRoomListByMap" resultType="cn.itrip.beans.vo.hotelroom.ItripHotelRoomVO"
+            parameterType="java.util.Map">
+        select
+        id as id,
+        hotelId as hotelId,
+        roomTitle as roomTitle,
+        roomPrice as roomPrice,
+        roomBedTypeId as roomBedTypeId,
+        isHavingBreakfast as isHavingBreakfast,
+        payType as payType,
+        satisfaction as satisfaction,
+        isBook as isBook,
+        isCancel as isCancel,
+        isTimelyResponse as isTimelyResponse
+        from itrip_hotel_room room
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="hotelId != null and hotelId!=''">
+                and hotelId=#{hotelId}
+            </if>
+            <if test="roomBedTypeId != null">
+                and roomBedTypeId=#{roomBedTypeId}
+            </if>
+            <if test="isHavingBreakfast != null">
+                and isHavingBreakfast=#{isHavingBreakfast}
+            </if>
+            <if test="payType == 1">
+                and (payType=1 or payType=3)
+            </if>
+            <if test="payType == 2">
+                and (payType=2 or payType=3)
+            </if>
+            <if test="payType == 3">
+                and payType=3
+            </if>
+            <if test="isBook != null">
+                and isBook=#{isBook}
+            </if>
+            <if test="isCancel != null">
+                and isCancel=#{isCancel}
+            </if>
+            <if test="isTimelyResponse != null">
+                and isTimelyResponse=#{isTimelyResponse}
+            </if>
+            <if test="timesList!=null and timesList!=''">
+                AND
+                <foreach item="item" index="index" collection="timesList" open="(" separator="AND" close=")">
+                    (
+                    (SELECT store FROM itrip_hotel_temp_store WHERE  roomId = room.id AND date_format(recordDate, '%Y-%m-%d') = date_format(#{item}, '%Y-%m-%d')) IS NULL
+                    OR
+                    (SELECT    store FROM itrip_hotel_temp_store WHERE roomId = room.id AND date_format(recordDate, '%Y-%m-%d') = date_format(#{item}, '%Y-%m-%d')) > 0
+                    )
+                </foreach>
+            </if>
+        </trim>
+        order by creationDate desc
+        <if test="beginPos != null and beginPos!='' and pageSize != null  and pageSize !='' ">
+            limit #{beginPos},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getItripHotelRoomById" resultType="cn.itrip.beans.pojo.ItripHotelRoom">
+        select
+        id as id,
+        hotelId as hotelId,
+        roomTitle as roomTitle,
+        roomPrice as roomPrice,
+        roomBedTypeId as roomBedTypeId,
+        isHavingBreakfast as isHavingBreakfast,
+        payType as payType,
+        satisfaction as satisfaction,
+        isBook as isBook,
+        isCancel as isCancel,
+        isTimelyResponse as isTimelyResponse,
+        creationDate as creationDate,
+        createdBy as createdBy,
+        modifyDate as modifyDate,
+        modifiedBy as modifiedBy
+        from itrip_hotel_room
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

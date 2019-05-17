@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itrip.dao.hotel.ItripHotelMapper">
+        <select id="getItripHotelFacilitiesById" resultType="cn.itrip.beans.vo.hotel.ItripSearchFacilitiesHotelVO">
+            select
+            facilities as facilities
+            from itrip_hotel
+            <trim prefix="where" prefixOverrides="and | or">
+                <if test="id != null">
+                    and id=#{id}
+                </if>
+            </trim>
+        </select>
+
+    <select id="queryHotelPolicy" resultType="cn.itrip.beans.vo.hotel.ItripSearchPolicyHotelVO" >
+        select
+        hotelPolicy as hotelPolicy
+        from itrip_hotel
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+        </trim>
+    </select>
+
+
+    <select id="getItripHotelById" resultType="cn.itrip.beans.pojo.ItripHotel" >
+        select
+        id as id,
+        hotelName as hotelName,
+        countryId as countryId,
+        provinceId as provinceId,
+        cityId as cityId,
+        address as address,
+        details as details,
+        facilities as facilities,
+        hotelPolicy as hotelPolicy,
+        hotelType as hotelType,
+        hotelLevel as hotelLevel,
+        isGroupPurchase as isGroupPurchase,
+        redundantCityName as redundantCityName,
+        redundantProvinceName as redundantProvinceName,
+        redundantCountryName as redundantCountryName,
+        redundantHotelStore as redundantHotelStore,
+        creationDate as creationDate,
+        createdBy as createdBy,
+        modifyDate as modifyDate,
+        modifiedBy as modifiedBy
+        from itrip_hotel
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+        </trim>
+    </select>
+
+    <select id="getHotelFeatureByHotelId" resultType="cn.itrip.beans.pojo.ItripLabelDic" >
+        SELECT
+        f.id as id,
+        d.name  AS name,
+        d.description as description
+        FROM itrip_hotel_feature f,itrip_label_dic d where f.featureId = d.id
+        <if test="id != null">
+            and f.hotelId=#{id}
+        </if>
+    </select>
+
+    <select id="getHotelAreaByHotelId" resultType="cn.itrip.beans.pojo.ItripAreaDic" >
+        select
+        a.id as id,
+        (select d.name FROM itrip_area_dic d
+        WHERE d.isActivated=1 AND d.id = a.areaId) AS name
+        from itrip_hotel_trading_area a
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and a.id=#{id}
+            </if>
+        </trim>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itrip.dao.labeldic.ItripLabelDicMapper">
+
+    <select id="getItripLabelDicListByMap" parameterType="java.util.Map" resultType="cn.itrip.beans.pojo.ItripLabelDic">
+        select
+        id as id,
+        name as name,
+        value as value,
+        description as description,
+        parentId as parentId,
+        pic as pic,
+        creationDate as creationDate,
+        createdBy as createdBy,
+        modifyDate as modifyDate,
+        modifiedBy as modifiedBy
+        from itrip_label_dic
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null and id!=''">
+                and id=#{id}
+            </if>
+            <if test="name != null and name!=''">
+                and name=#{name}
+            </if>
+            <if test="value != null and value!=''">
+                and value=#{value}
+            </if>
+            <if test="description != null and description!=''">
+                and description=#{description}
+            </if>
+            <if test="parentId != null and parentId!=''">
+                and parentId=#{parentId}
+            </if>
+            <if test="pic != null and pic!=''">
+                and pic=#{pic}
+            </if>
+            <if test="creationDate != null and creationDate!=''">
+                and creationDate=#{creationDate}
+            </if>
+            <if test="createdBy != null and createdBy!=''">
+                and createdBy=#{createdBy}
+            </if>
+            <if test="modifyDate != null and modifyDate!=''">
+                and modifyDate=#{modifyDate}
+            </if>
+        </trim>
+        order by creationDate desc
+        <if test="beginPos != null and beginPos!='' and pageSize != null  and pageSize !='' ">
+            limit #{beginPos},#{pageSize}
+        </if>
+    </select>
+
+
+    <select id="getItripLabelDicByParentId" resultType="cn.itrip.beans.vo.ItripLabelDicVO" >
+        select
+        id as id,
+        name as name,
+        value as value,
+        description as description,
+        parentId as parentId,
+        pic as pic,
+        creationDate as creationDate,
+        createdBy as createdBy,
+        modifyDate as modifyDate,
+        modifiedBy as modifiedBy
+        from itrip_label_dic
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="parentId != null">
+                and parentId=#{parentId}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

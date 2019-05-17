@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop
+      http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+      http://www.springframework.org/schema/mvc
+      http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+      http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/tx
+      http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <!--关于支付宝支付这块的配置信息-->
+
+    <!--创建AlipayConfig类的对象，并为这个对象的各个属性赋值-->
+    <!-- 支付宝手机网站支付 -->
+    <bean id="alipayConfig" class="cn.itrip.trade.config.AlipayConfig">
+        <property name="appID" value="2019012263094327"/>
+        <!--商户应用的私钥-->
+        <property name="rsaPrivateKey" value="MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCQ5c21+Hgqc3/rHQ4yWVM9Y1er2a/f2kfc8sHnf1qeio/7IM+hWi/dyd7p4E/UnNd0SyYNLhzeOPOiaaDNgcc3NI861RK2uyN6Q/op+oSvit8JWXfgrf2V9VUDazhfiY5anqY+TlZr222M4BmYEoektEeWTZll7UR/ogKN7V7BLW7bGczIfIUyCzB7O5tio830Cu98cFKYr8+5qICmAGUCyKG3ny4rg/e5f6cXIhBzkixt3eLZiGfi7cZLG6ZrUjHlX7kwuoajySTqU8aV6FU6KctplLPD75GizmKNrszJRP/sEatJR6/gZ2QIrl1JzFLOpDahTx+mRcGRSx78UjQHAgMBAAECggEAXrfqXk77dnykHTSUKDOeJ13+XJdj0chl+7gxKzxkJ4laj4YmVEqZSbmB347DgK+6ZAoP6MPBGT9PfFbiSBTS/nJ8QrAwmIUCrxUqvjBGdl4oaHs00wnJ4DJMjXyUkFdiWDinYclh0wXQuitwb6mFRBSZS1aUtT2B7pEgbFjD/TDSGBL9Cx6eftfruqAiv9B70g5UNbSmpcyf9CnS2vzv/HNgMhMNhVENZMMNXFb498V/yn+yJVXTPBOGPmsXHdI9y+uv4wYLeMXgEWfN+UnoU/59daEbKcYgNK4RhYEwIOBGc9NCdS7m+mutxD8kkBejj2TmVl4zned5WHcaZNb1oQKBgQDSxAq5FEZ/+7Na8XJTOS17NURSt7YZM8evBjy8Miifxk0cPBGtHvj8Ev/Fa4/ZpC5+MySWfttF+wtM4XdjZVUZYuNCD0kx7GOj8Q3R+rBVTGA3W4ZpYfadNEGbiXMj09HV3BVxTntm17OxqLrUtT2UhthuMT0r83X0hZczPe8Q8QKBgQCv/tDBxB661l9rccb0hBq81R+loUsFvpe4xM+t1gdm6MrTVHDp0RORlDMbQrKZlQLXxxNPg929i+RZQ61AenNd5bCgm+B5TM1M92780POwaxcssEQBnmVXD1z6PeYv+5KKRlQ1lDmVb5XrWLKOYA4OIEJBqbCAkPcpH7TWAsaUdwKBgGtE4Zw+6H680RTpK+GViUNa4fIjlCeRhgDbcM/ry2c+GwLSw8BTsi9BUDHfQ7Bmck9Cok2CNQGR+rdfTU8mRMCN5tI5S2yAPlozFnCXYWWYYKPsDiXWeRibfwS1WQeUCAkLYVJwujemcstp7+TQdY4Bb2ft4Y9b8t3HnCO1UtZRAoGAJja38Tq6SWs+sL+1qWX9wD6ubnJFLewiWXYyedZdKRUm5RgSpFJHY3bAWgzzZrGaOmv5X2yMexmi7VbqiXONFThIT7dI2E26zhlzueVM5GN8VrG3MnrIGk01rQg/sO949BktM60Ji878yGsr6golQx/yAvvrXR8c64r84vMbVyUCgYALaB1Oy/J2gwt+O/t3cD1WmEc6Pr7I26X6AB+C0BCGOKtOge0aufs3MEMWX3CVeT4McDn5zKO9ay9ywbCM/pf5fK8NgfjKXWDdFSjElwqm1G5f+zkFR4vpt9M5R6hNcbA+9GoUdnsCGeP5GYOh1EeIfMjHnyWQR6M/xCqbAXTgCA=="/>
+        <!--这里是设置异步通知页面路径-->
+        <property name="notifyUrl" value="http://hjh.vipgz1.idcfengye.com/trade/api/notify"/>
+        <!--这里是设置同步通知页面路径-->
+        <property name="returnUrl" value="http://hjh.vipgz1.idcfengye.com/trade/api/return"/>
+        <!--url为支付宝网关， 注如果是使用沙箱环境，url地址为：https://openapi.alipaydev.com/gateway.do-->
+        <property name="url" value="https://openapi.alipay.com/gateway.do"/>
+        <property name="charset" value="UTF-8"/>
+        <property name="format" value="json"/>
+        <!--alipayPublicKey  支付宝公钥，注：不是商户应用的公钥。-->
+        <property name="alipayPublicKey" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkDHcnVQaqEDyIgj0/e+Lx568++cG8xygoZYzz9LbE2wxO0q9NiUH1A+3AeA45RW4KLOqfYvnzOa+oxzlbMOp5sDd42Qtvocwu/5CiHAbQpZllyJZrZvU/fQNZGyjkEVC4NQKDI4vUrEdAL17ngsosRRo9TaDTpnpfIsVSc/hGL2DjmH6IwoJryqevDhsDsPHyMBtxJiYvIR/Om05UlThMn5m5LQVngjM4P9hNhL+nUtTqrfsMIbBfaLkdXs8wpER0Pm1S/H3ruOsuIlggJqX5LI0ebXEm6l2ytK6EAC7IP6gQG29xj0eFoYQVwyJQPOGb1sYAU/aKzlOssixYUln+wIDAQAB"/>
+        <property name="logPath" value="/logs"/>
+        <property name="signType" value="RSA2"/>
+        <!--支付成功的跳转路径-->
+        <property name="paymentSuccessUrl" value="http://hjh.vipgz1.idcfengye.com/trade/api/paymentSucc"/>
+        <!--支付失败的跳转路径-->
+        <property name="paymentFailureUrl" value="http://hjh.vipgz1.idcfengye.com/trade/api/paymentFail"/>
+    </bean>
+
+</beans>

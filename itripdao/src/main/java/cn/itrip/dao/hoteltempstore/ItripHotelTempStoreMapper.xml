@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itrip.dao.hoteltempstore.ItripHotelTempStoreMapper">
+
+    <update  id="flushStore" parameterType="java.util.Map" statementType="CALLABLE">
+        {call pre_flush_store(
+            #{startTime,jdbcType=DATE,mode=IN},
+            #{endTime,jdbcType=DATE,mode=IN},
+            #{roomId,jdbcType=BIGINT,mode=IN},
+            #{hotelId,jdbcType=BIGINT,mode=IN}
+          )
+        }
+    </update >
+
+    <select id="queryRoomStore" resultType="cn.itrip.beans.vo.store.StoreVO"  parameterType="java.util.Map">
+              SELECT A.roomId,A.recordDate,A.store from (
+              SELECT
+                    store.roomId,
+                    store.recordDate,
+                    DATE_FORMAT(store.recordDate,'%Y-%m-%d'),
+                   store.store - (
+                            CASE
+                            WHEN SUM(ord.count) IS NULL THEN
+                                0
+                            ELSE
+                                SUM(ord.count)
+                            END
+                   ) AS store
+                    FROM
+                        itrip_hotel_temp_store store
+                    LEFT JOIN itrip_hotel_order ord ON store.roomId = ord.roomId AND ord.orderStatus = 0
+                    AND DATE_FORMAT(store.recordDate,'%Y-%m-%d') BETWEEN DATE_FORMAT(ord.checkInDate, '%Y-%m-%d') AND DATE_FORMAT(ord.checkOutDate,'%Y-%m-%d')
+                    WHERE   store.roomId = #{roomId}
+                    GROUP BY  store.roomId,store.recordDate) AS A
+                    WHERE  A.recordDate BETWEEN DATE_FORMAT(#{startTime}, '%Y-%m-%d') AND DATE_FORMAT(#{endTime}, '%Y-%m-%d') ORDER by A.store ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd ">
+
+    <!--START ==== 添加Spring集成Swagger所需要的配置 ==== START-->
+    <mvc:default-servlet-handler/>
+    <context:component-scan base-package="cn.itrip.controller">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation" expression="org.springframework.context.annotation.Configuration"/>
+        <context:include-filter type="annotation" expression="org.springframework.scheduling.annotation.Scheduled"/>
+    </context:component-scan>
+    <!--END ==== 添加Spring集成Swagger所需要的配置 ==== END-->
+
+    <!-- cn.smbms.controller 包名用于存入各个控制器的，控制器类似S2的servlet是用于处理HTTP请求的
+     通过context:component-scan标签，Spring会自动去cn.smbms.controller包里进行扫描，一旦发现使用
+       @Controller注解标注的类，让它注册Bean组件 -->
+    <context:component-scan base-package="cn.itrip.controller" />
+
+    <!-- 让SpringMVC支持@Controller、@RequestMapping注解 -->
+    <mvc:annotation-driven conversion-service="myConversionService">
+
+        <mvc:message-converters>
+            <!-- 配置字符串的消息转换器用于处理在返回的JSON字符串中出现中文乱码问题 -->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <!-- 设置当前 消息转换器的编码格式为UTF-8,原来是ISO-8859-1 text/html;charset=UTF-8 -->
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+
+            <!-- 配置FastJson的消息转换器来解决 JSON数据传递过程中的日期格式问题 -->
+            <bean
+                    class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <!-- 设置当前 消息转换器的编码格式为UTF-8,原来是ISO-8859-1 text/html;charset=UTF-8 -->
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>text/plain;charset=UTF-8</value>
+                    </list>
+                </property>
+                <property name="features">
+                    <list>
+                        <!-- 让当前json数据中的日期格式采用FastJson默认的日期格式(yyyy-MM-dd HH:mm:ss) -->
+                        <value>WriteDateUseDateFormat</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- 配置自定义的转换器 -->
+    <bean id="myConversionService"
+          class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <bean class="cn.itrip.common.StringToDateConverter">
+                    <constructor-arg type="java.lang.String" value="yyyy-MM-dd"></constructor-arg>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 2.4 配置支持文件上传——CommonsMultipartResolver -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置maxUploadSize即最大的上传大小为5000000byte。 即500kb -->
+        <property name="maxUploadSize" value="5000000"></property>
+        <property name="defaultEncoding" value="UTF-8"></property>
+    </bean>
+
+    <!-- 配置多视图解析器——ContentNegoriatingViewResolver
+       JSON格式的视图解析器、HTML格式的视图解析器、XML格式的视图解析器
+       String str = "<h2><a href="">Hello world</a></h2>";
+       /user/view.html?id=1     /user/view.json?id=1
+     -->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="favorParameter" value="true"></property>
+        <property name="mediaTypes">
+            <map>
+                <!-- 根据MIME格式的不同，设置 ContentType的值
+                   如：/user/view.json?id=1    mime格式为json  "<h2><a href="">Hello world</a></h2>";
+                 -->
+                <entry key="xml" value="application/xml;charset=UTF-8"></entry>
+                <entry key="html" value="text/html;charset=UTF-8"></entry>
+                <entry key="json" value="application/json;charset=UTF-8"></entry>
+            </map>
+        </property>
+        <!-- 配置 Springmvc所需要的内部资源解析器-->
+        <property name="viewResolvers">
+            <list>
+                <bean
+                        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                    <property name="prefix" value="/WEB-INF/jsp/"></property>
+                    <property name="suffix" value=".jsp"></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <context:property-placeholder location="classpath:systemConfig.properties" />
+    <bean name="systemConfig" class="cn.itrip.common.SystemConfig">
+        <property name="fileUploadPathString" value="${sysConfig.fileUploadPath}"/>
+        <property name="visitImgUrlString" value="${sysConfig.visitImgUrl}"/>
+        <property name="machineCode" value="${sysConfig.machineCode}"/>
+        <property name="orderProcessOK" value="${sysConfig.orderProcessOK}"/>
+        <property name="orderProcessCancel" value="${sysConfig.orderProcessCancel}"/>
+    </bean>
+
+</beans>
+
